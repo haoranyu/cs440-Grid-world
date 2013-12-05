@@ -7,7 +7,7 @@
 #include "maze.h"
 
 using namespace std;
-class maze;
+class map;
 
 class agent {
 public:
@@ -32,7 +32,7 @@ public:
     
     agent(float center,float left,float right);
     
-    maze *mapp;
+    map *mapp;
     
     void TDQ(float err);
     int selectaction(node *state);

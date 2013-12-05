@@ -124,9 +124,8 @@ void output(agent &robot, map &world) {
 int main() {
 
     srand((unsigned)time(NULL));
-    maze world;
-    agent robot(0.8, 0.1, 0.1, &world);
-    
+    agent robot(0.8, 0.1, 0.1);
+    map world;
     
     robot.curr = world.start;
     robot.mapp = &world;

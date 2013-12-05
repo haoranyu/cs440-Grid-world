@@ -4,7 +4,7 @@
 
 using namespace std;
 
-maze::maze() {
+map::map() {
 
     for (int i=0; i<6;i++) {
         for (int j=0; j<6; j++) {
@@ -94,7 +94,7 @@ maze::maze() {
         cout<<endl;
     }
 }
-void maze::setTerminal(int i, int j, int val){
+void map::setTerminal(int i, int j, int val){
     state[i][j]->R=1;
     state[i][j]->expUtil=1;
     for (int k=0; k<4; k++) {
@@ -104,7 +104,7 @@ void maze::setTerminal(int i, int j, int val){
       state[i][j]->direct[k]=terminal;
     }
 }
-float maze::optimalU(node * state,agent & robot) {
+float map::optimalU(node * state,agent & robot) {
     int policy = 1;
     
     float maxU   =  (robot.center * state->direct[1]->expUtil) + 
@@ -126,7 +126,7 @@ float maze::optimalU(node * state,agent & robot) {
     return maxU;
 }
 
-void maze::valueIter(float err, agent & robot) {
+void map::valueIter(float err, agent & robot) {
     float DiffU;
     int stop=0;
     

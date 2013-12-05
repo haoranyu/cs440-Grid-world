@@ -12,6 +12,7 @@ agent::agent(float center, float left, float right) {
     this->left = left;
     this->right = right;
     //this->utility_sum = 0;
+
     this->gamma = 0.99;
     Rp = 2;
     Ne = 10;
@@ -46,7 +47,7 @@ void agent::TDQ(float err) {
     
     for(iternum=0; iternum < 20000; iternum++) {
         
-        //curr = map->start;        //initialize the starting state
+        curr = mapp->start;        //initialize the starting state
         
         a=selectaction(curr);           //choose a from the initial state
 
