@@ -15,7 +15,6 @@ public:
     
     states * s[6][6];
     states * start;
-    states * terminal;
 
 private:
 	void setTerminal(int i, int j, int val);

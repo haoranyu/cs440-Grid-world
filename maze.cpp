@@ -13,10 +13,6 @@ maze::maze() {
         }
     }
     
-    terminal = new states(-1,-1);
-    terminal->expUtil = 0;
-    terminal->reward = 0;
-
     setWall(0, 3);
     setWall(1, 1);
     setWall(1, 3);
@@ -81,13 +77,19 @@ maze::maze() {
 }
 void maze::setTerminal(int i, int j, int val){
     feature[i][j] = 'T';
+
+    states * temp = new states(-1,-1);
+    temp->expUtil = 0;
+    temp->reward = 0;
+
+
     s[i][j]->reward=val;
     s[i][j]->expUtil=val;
     for (int k=0; k < 4; k++) {
         s[i][j]->Q[k]=val;
     }
     for (int k=0; k < 6; k++) {
-      s[i][j]->direct[k]=terminal;
+      s[i][j]->direct[k] = temp;
     }
 }
 void maze::setWall(int i, int j){
