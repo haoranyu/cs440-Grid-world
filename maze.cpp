@@ -4,16 +4,16 @@
 
 using namespace std;
 
-map::map() {
+maze::maze() {
 
     for (int i=0; i<6;i++) {
         for (int j=0; j<6; j++) {
             feature[i][j]='*';
-            state[i][j] = new node(i,j);    //create node
+            state[i][j] = new states(i,j);    //create states
         }
     }
     
-    terminal=new node(-1,-1);        //terminal state
+    terminal=new states(-1,-1);        //terminal state
     terminal->expUtil=0;
     terminal->R=0;
     
@@ -49,7 +49,7 @@ map::map() {
                     state[i][j]->direct[1]=state[i-1][j];
             }
 
-            if(i<5) {
+            if (i<5) {
                 if (feature[i+1][j]=='W')
                     state[i][j]->direct[3]=state[i][j];
                 else
@@ -62,10 +62,9 @@ map::map() {
                     state[i][j]->direct[2]=state[i][j];
                 else
                     state[i][j]->direct[2]=state[i][j+1];
-
             }
             
-            if(j>0) {
+            if (j>0) {
                 if (feature[i][j-1]=='W')
                     state[i][j]->direct[4]=state[i][j];
                 else
@@ -85,7 +84,7 @@ map::map() {
     setTerminal(4,5,-1);
     setTerminal(5,2,-1);
     setTerminal(5,3,-1);
-    setTerminal(5,5,1);
+    setTerminal(5,5,10);
     
     for (int i=0; i<6; i++) {
         for (int j=0;j<6;j++) {
@@ -94,58 +93,14 @@ map::map() {
         cout<<endl;
     }
 }
-void map::setTerminal(int i, int j, int val){
-    state[i][j]->R=1;
-    state[i][j]->expUtil=1;
+void maze::setTerminal(int i, int j, int val){
+    state[i][j]->R=val;
+    state[i][j]->expUtil=val;
     for (int k=0; k<4; k++) {
-        state[i][j]->Q[k]=1;
+        state[i][j]->Q[k]=val;
     }
     for (int k=0; k<6; k++) {
       state[i][j]->direct[k]=terminal;
     }
 }
-float map::optimalU(node * state,agent & robot) {
-    int policy = 1;
-    
-    float maxU   =  (robot.center * state->direct[1]->expUtil) + 
-                    (robot.left * state->direct[0]->expUtil) + 
-                    (robot.right * state->direct[2]->expUtil);
 
-    for (int i = 2; i < 5; i++) {
-        float tempU =   (robot.center * state->direct[i]->expUtil) + 
-                        (robot.left * state->direct[i-1]->expUtil) + 
-                        (robot.right * state->direct[i+1]->expUtil);
-        
-        if (tempU > maxU) {
-            maxU = tempU;
-            policy = i;
-        }
-    }
-    
-    state->optimalpolicy_U = policy;
-    return maxU;
-}
-
-void map::valueIter(float err, agent & robot) {
-    float DiffU;
-    int stop=0;
-    
-    for(iternum=0; iternum < 50; iternum++) {
-        stop=1;
-        for (int i=0; i<6;i++) {
-            for (int j=0; j<6; j++) {
-                state[i][j]->HistoryU.push_back(state[i][j]->expUtil);
-                state[i][j]->expUtilNext=state[i][j]->R+robot.gamma*optimalU(state[i][j], robot);
-
-        
-                DiffU=abs(state[i][j]->expUtilNext-state[i][j]->expUtil);
-                if (DiffU > err) {        // if this update is not stable, then stop=0 means we need another iteration
-                    stop=0;
-                } 
-                state[i][j]->expUtil=state[i][j]->expUtilNext;
-                
-                
-            }
-        }    
-    }
-}

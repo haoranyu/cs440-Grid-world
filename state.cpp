@@ -1,6 +1,6 @@
 #include "state.h"
 
-node::node(int i, int j) {
+states::states(int i, int j) {
     this->expUtil = 0;
     this->expUtilNext = 0;
     this->visit = 0;

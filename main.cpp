@@ -17,11 +17,13 @@ string mapDirt(int d) {
     }
 }
 
-void output(agent &robot, map &world) {
+void output(agent &robot, maze &world) {
     ofstream valiter("result/ValIter.txt");
     ofstream qlearn("result/QLearning.txt");
-    ofstream figure("result/Figure.csv");
-    
+    ofstream figureV("result/FigureV.csv");
+    ofstream figureQ("result/FigureQ.csv");
+    ofstream rmserror("result/RMSerror.csv");
+       
     valiter<<"Value Iteration utilities"<<endl;
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
@@ -29,10 +31,8 @@ void output(agent &robot, map &world) {
                 valiter<<setw(10)<<'#';
             }
             else
-                valiter<<setprecision(4)<<setw(10)<<world.state[i][j]->expUtil;
+                valiter<<setprecision(6)<<setw(10)<<world.state[i][j]->expUtil;
         }
-        
-        
         valiter<<endl;
     }
     valiter<<endl;
@@ -44,11 +44,44 @@ void output(agent &robot, map &world) {
             if (world.feature[i][j]=='W') {
                 valiter<<'#'<<"\t";
             }
+            else if (world.feature[i][j]=='T') {
+                valiter<<'T'<<"\t";
+            }
             else
-                valiter<<setprecision(4)<<mapDirt(world.state[i][j]->optimalpolicy_U)<<"\t";
+                valiter<<setprecision(6)<<mapDirt(world.state[i][j]->optimalpolicy_U)<<"\t";
         }
         valiter<<endl;
     }
+
+    for (int i=0; i<6; i++) {
+        for (int j=0; j<6; j++) {
+            if (world.feature[i][j]=='W') {
+                    
+            }
+            else
+                figureV<<setprecision(6)<<world.state[i][j]->i<<","<<world.state[i][j]->j<<";";
+            
+        }
+    }
+    
+    
+    figureV<<endl;
+
+    for (int k=0; k<world.iternum; k++) {
+
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<6; j++) {
+                if (world.feature[i][j]=='W') {
+                    
+                }
+                else
+                    figureV<<setprecision(6)<<world.state[i][j]->HistoryU[k]<<";";
+                
+            }
+        }
+        figureV<<endl;
+    }
+        
 
     
     
@@ -60,7 +93,7 @@ void output(agent &robot, map &world) {
                 qlearn<<setw(10)<<'#';
             }
             else
-                qlearn<<setprecision(4)<<setw(10)<<world.state[i][j]->Qfinal;
+                qlearn<<setprecision(6)<<setw(10)<<world.state[i][j]->Qfinal;
         }
         qlearn<<endl;
     }
@@ -74,63 +107,68 @@ void output(agent &robot, map &world) {
             if (world.feature[i][j]=='W') {
                 qlearn<<'#'<<"\t";
             }
+            else if (world.feature[i][j]=='T') {
+                qlearn<<'T'<<"\t";
+            }
             else
-                qlearn<<setprecision(4)<<mapDirt(world.state[i][j]->optimalpolicy_Q)<<"\t";
+                qlearn<<setprecision(6)<<mapDirt(world.state[i][j]->optimalpolicy_Q)<<"\t";
         }
         qlearn<<endl;
     }
 
-    
+
+
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
             if (world.feature[i][j]=='W') {
-                
+                    
             }
             else
-                figure<<setprecision(4)<<world.state[i][j]->i<<","<<world.state[i][j]->j<<";";
+                figureQ<<setprecision(6)<<world.state[i][j]->i<<","<<world.state[i][j]->j<<";";
+            
         }
     }
     
     
-    figure<<endl;
+    figureQ<<endl;
 
     for (int k=0; k<world.iternum; k++) {
 
         for (int i=0; i<6; i++) {
             for (int j=0; j<6; j++) {
                 if (world.feature[i][j]=='W') {
-
+                    
                 }
                 else
-                    figure<<setprecision(4)<<world.state[i][j]->HistoryU[k]<<";";
+                    figureQ<<setprecision(6)<<world.state[i][j]->QHistoryU[k]<<";";
+                
             }
         }
-        
-        figure<<endl;
+        figureQ<<endl;
     }
-        
 
-    qlearn<<"RMS error function"<<endl;;
 
     for (int k=0; k<robot.RMS.size(); k++) {
-        qlearn<<robot.RMS[k]<<endl;
+        rmserror<<k+1<<","<<robot.RMS[k]<<endl;
     }
     
     valiter.close();
     qlearn.close();
-    figure.close();
+    figureV.close();
+    figureQ.close();
+    rmserror.close();
 }
 
 int main() {
 
     srand((unsigned)time(NULL));
     agent robot(0.8, 0.1, 0.1);
-    map world;
+    maze world;
     
     robot.curr = world.start;
     robot.mapp = &world;
     
-    world.valueIter(0.0001, robot);
+    robot.valueIter(0.0001);
     
     robot.curr = world.start;
     robot.TDQ(0.0001);

@@ -7,13 +7,13 @@
 #include "maze.h"
 
 using namespace std;
-class map;
+class maze;
 
 class agent {
 public:
-    node * curr;
-    node * next;
-    node * going(int direction);
+    states * curr;
+    states * next;
+    states * going(int direction);
     
     int iternum;        //the number of iternation;
     
@@ -31,11 +31,12 @@ public:
     int Ne;             //Ne
     
     agent(float center,float left,float right);
-    
-    map *mapp;
+    void valueIter(float err);
+    float optimalU(states * state) ;
+    maze *mapp;
     
     void TDQ(float err);
-    int selectaction(node *state);
+    int selectaction(states *state);
     
     int tempaction;
     

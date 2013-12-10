@@ -7,19 +7,18 @@
 
 class agent;
 
-class map {
+class maze {
 public:
-	map();
-	void valueIter(float err, agent & player);
+	maze();
+
     void setTerminal(int i, int j, int val);
-    
-    float optimalU(node * state,agent & player);
+
 
     char feature[6][6];
     
-    node * state[6][6];
-    node * start;
-    node * terminal;
+    states * state[6][6];
+    states * start;
+    states * terminal;
     
     int iternum;
 };
