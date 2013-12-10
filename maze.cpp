@@ -6,8 +6,8 @@ using namespace std;
 
 maze::maze() {
 
-    for (int i=0; i<6;i++) {
-        for (int j=0; j<6; j++) {
+    for (int i = 0; i < 6;i++) {
+        for (int j = 0; j < 6; j++) {
             feature[i][j]='*';
             s[i][j] = new states(i,j);    //create states
         }
@@ -26,8 +26,8 @@ maze::maze() {
     start = s[5][0];
     
     
-    for (int i=0; i<6;i++) {
-        for (int j=0; j<6; j++) {
+    for (int i=0; i < 6;i++) {
+        for (int j=0; j < 6; j++) {
             
             s[i][j]->direct[1] = s[i][j];
             s[i][j]->direct[2] = s[i][j];
@@ -36,32 +36,32 @@ maze::maze() {
             
             
             if (i>0) {
-                if (feature[i-1][j]=='W') 
-                    s[i][j]->direct[1]=s[i][j];
+                if (feature[i-1][j] == 'W') 
+                    s[i][j]->direct[1] = s[i][j];
                 else
-                    s[i][j]->direct[1]=s[i-1][j];
+                    s[i][j]->direct[1] = s[i-1][j];
             }
 
-            if (i<5) {
-                if (feature[i+1][j]=='W')
-                    s[i][j]->direct[3]=s[i][j];
+            if (i < 5) {
+                if (feature[i+1][j] == 'W')
+                    s[i][j]->direct[3] = s[i][j];
                 else
-                    s[i][j]->direct[3]=s[i+1][j];
+                    s[i][j]->direct[3] = s[i+1][j];
             }
             
-            if (j<5) {
+            if (j < 5) {
                 
-                if (feature[i][j+1]=='W')
-                    s[i][j]->direct[2]=s[i][j];
+                if (feature[i][j+1] == 'W')
+                    s[i][j]->direct[2] = s[i][j];
                 else
-                    s[i][j]->direct[2]=s[i][j+1];
+                    s[i][j]->direct[2] = s[i][j+1];
             }
             
             if (j>0) {
-                if (feature[i][j-1]=='W')
-                    s[i][j]->direct[4]=s[i][j];
+                if (feature[i][j-1] == 'W')
+                    s[i][j]->direct[4] = s[i][j];
                 else
-                    s[i][j]->direct[4]=s[i][j-1];
+                    s[i][j]->direct[4] = s[i][j-1];
             }
 
             
@@ -83,10 +83,10 @@ void maze::setTerminal(int i, int j, int val){
     feature[i][j] = 'T';
     s[i][j]->reward=val;
     s[i][j]->expUtil=val;
-    for (int k=0; k<4; k++) {
+    for (int k=0; k < 4; k++) {
         s[i][j]->Q[k]=val;
     }
-    for (int k=0; k<6; k++) {
+    for (int k=0; k < 6; k++) {
       s[i][j]->direct[k]=terminal;
     }
 }

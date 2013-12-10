@@ -21,7 +21,7 @@ public:
     vector <float> RMS;
 
 private:
-    int     selectaction(states *state);
+    int     queryAction(states *state);
     float   optimalU(states * state) ;
     states *takeAction(int direction);
 

@@ -9,9 +9,9 @@ states::states(int i, int j) {
     this->i = i;
     this->j = j;
     
-    Qfinal=0;
+    finalQ=0;
     for (int k=0; k<4;k++) {
-        NAction[k]=0;
+        nAct[k]=0;
 
         Q[k]=0;
     }

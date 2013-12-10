@@ -13,21 +13,22 @@ public:
 
     states * direct[6];
 
-    float expUtil;     //the expected utility of current state
+    float expUtil;
     float reward;
     
-    float expUtilNext;    //the expect utility of next stage;
+    float expUtilNext;
     
     int i, j;
     
-    float Q[4];             //the Q function 0: up  1: right, 2: down; 3: left
+    float Q[4];
     
-    float Qfinal;
+    float finalQ;
     
-    int NAction[4];         //the Ne function 0
+    int nAct[4];
     int visit;
-    int optimalpolicy_Q;      //the optimal policy based on Q value
-    int optimalpolicy_U;      //the optimal policy based on U value
+    
+    int policy_Q;
+    int policy_U;
     
     vector<float> hist_V;
     vector<float> hist_Q;

@@ -20,13 +20,17 @@ int main() {
     maze  world;
     agent robot(0.8, 0.1, 0.1, world);
     robot.valueIterate(0.0001);
-    
+
+    cout << "Finish valueIterate" <<endl;
+
     robot.startReset();
     robot.tdQlearning(0.0001);
     
-    cout << "FINISH\n";
+    cout << "Finish tdQlearning" <<endl;
     
     output(robot, world);
+
+    cout << "Finish output" <<endl;
     
     return 0;
 }
@@ -71,7 +75,7 @@ void output(agent &robot, maze &world) {
                 valiter<<'T'<<"\t";
             }
             else
-                valiter<<setprecision(6)<<mapDirt(world.s[i][j]->optimalpolicy_U)<<"\t";
+                valiter<<setprecision(6)<<mapDirt(world.s[i][j]->policy_U)<<"\t";
         }
         valiter<<endl;
     }
@@ -115,7 +119,7 @@ void output(agent &robot, maze &world) {
                 qlearn<<setw(10)<<'#';
             }
             else
-                qlearn<<setprecision(6)<<setw(10)<<world.s[i][j]->Qfinal;
+                qlearn<<setprecision(6)<<setw(10)<<world.s[i][j]->finalQ;
         }
         qlearn<<endl;
     }
@@ -133,7 +137,7 @@ void output(agent &robot, maze &world) {
                 qlearn<<'T'<<"\t";
             }
             else
-                qlearn<<setprecision(6)<<mapDirt(world.s[i][j]->optimalpolicy_Q)<<"\t";
+                qlearn<<setprecision(6)<<mapDirt(world.s[i][j]->policy_Q)<<"\t";
         }
         qlearn<<endl;
     }

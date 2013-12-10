@@ -29,18 +29,18 @@ void agent::startReset(){
 states * agent::takeAction(int direction) {
     int randnum = rand()%10;
     
-    if (randnum == 0)
+    if (randnum ==  0)
         return curr->direct[direction+1];
-    else if (randnum == 1)
+    else if (randnum ==  1)
         return curr->direct[direction-1];
     else
         return curr->direct[direction];
 }
 
 void agent::valueIterate(float err) {
-    for (int h=0; h < 50; h++) {
-        for (int i=0; i<6;i++) {
-            for (int j=0; j<6; j++) {
+    for (int h = 0; h < 50; h++) {
+        for (int i = 0; i < 6;i++) {
+            for (int j = 0; j < 6; j++) {
                 world->s[i][j]->hist_V.push_back(world->s[i][j]->expUtil);
                 world->s[i][j]->expUtilNext = world->s[i][j]->reward+this->gamma*this->optimalU(world->s[i][j]);
                 world->s[i][j]->expUtil = world->s[i][j]->expUtilNext;
@@ -67,7 +67,7 @@ float agent::optimalU(states * state) {
         }
     }
     
-    state->optimalpolicy_U = policy;
+    state->policy_U = policy;
     return maxU;
 }
 
@@ -84,31 +84,31 @@ void agent::tdQlearning(float err) {
         
         curr = world->start;
         
-        act=selectaction(curr);
-        while (curr->i!=-1) {
+        act = queryAction(curr);
+        while (curr->i != -1) {
 
-            next=takeAction(act);   
+            next = takeAction(act);   
             curr->visit++;
-            curr->NAction[act-1]+=1;
+            curr->nAct[act-1] += 1;
 
-            alpha=60.0/(59+curr->NAction[act-1]);
+            alpha = 60.0 / (59 + curr->nAct[act-1]);
 
-            act_next=selectaction(next); 
+            act_next = queryAction(next); 
 
-            temp=0;
-            maxQ=-999;
+            temp = 0;
+            maxQ = -999;
             
-            for (int k=0; k<4; k++) {
-                temp=next->Q[k];
+            for (int k = 0; k < 4; k++) {
+                temp = next->Q[k];
                 if (temp>maxQ) {
-                    maxQ=temp;
+                    maxQ = temp;
                 }
             }
 
-            curr->Q[act-1]=curr->Q[act-1]+alpha*(curr->reward+gamma*maxQ-curr->Q[act-1]);
+            curr->Q[act-1] = curr->Q[act-1]+alpha*(curr->reward+gamma*maxQ-curr->Q[act-1]);
             
-            curr=next;
-            act=act_next;
+            curr = next;
+            act = act_next;
         }
 
     
@@ -116,14 +116,14 @@ void agent::tdQlearning(float err) {
         int         action = 0;
         states *    temp_s = NULL;
 
-        for (int i=0; i<6; i++) {
-            for (int j=0; j<6; j++) {
-                temp=0;
-                maxQ=-9999;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                temp = 0;
+                maxQ = -9999;
                 
-                temp_s=world->s[i][j];
-                for (int k=0; k<4; k++) {
-                    temp=temp_s->Q[k];
+                temp_s = world->s[i][j];
+                for (int k = 0; k < 4; k++) {
+                    temp = temp_s->Q[k];
                     
                     if (temp > maxQ) {
                         maxQ = temp;
@@ -131,12 +131,12 @@ void agent::tdQlearning(float err) {
                     }
                 }
                 
-                temp_s->Qfinal=maxQ;
-                temp_s->hist_Q.push_back(temp_s->Qfinal);
-                temp_s->optimalpolicy_Q=action;
+                temp_s->finalQ = maxQ;
+                temp_s->hist_Q.push_back(temp_s->finalQ);
+                temp_s->policy_Q = action;
                 
                 if (!(world->isWall(i,j)) && !(world->isTerminal(i, j))) {
-                    RMSE_temp+=(temp_s->expUtil-maxQ)*(temp_s->expUtil-maxQ)/25;
+                    RMSE_temp += (temp_s->expUtil-maxQ)*(temp_s->expUtil-maxQ) / 25;
                 }
             }
         }
@@ -144,27 +144,21 @@ void agent::tdQlearning(float err) {
     }
 }
 
-int agent::selectaction(states * state) {
-    float maxQ=-999;
-    float temp=0;
-    int action=-1;
-    int N;
-    float ratio;
+int agent::queryAction(states * state) {
+    float maxQ = -9999;
+    float temp = 0;
+    int action = -1;
 
-    for (int i=1; i<5; i++) {
-        ratio=rand()/(double(RAND_MAX));
-        N=state->NAction[i-1];
-        
-        if (N<Ne)
-            temp = Rp *(1+ratio); 
+    for (int i = 1; i < 5; i++) {
+        if (state->nAct[i-1]<Ne)
+            temp = Rp *(1+rand() / (double(RAND_MAX))); 
         else
             temp = state->Q[i-1];
                 
-        if (temp>maxQ) {
-            maxQ=temp;
+        if (temp > maxQ) {
+            maxQ = temp;
             action = i;
         }
     }
-
     return action;
 }
