@@ -14,6 +14,6 @@ states::states(int i, int j) {
         NAction[k]=0;
 
         Q[k]=0;
-    } 
+    }
 
 }

@@ -27,7 +27,7 @@ void output(agent &robot, maze &world) {
     valiter<<"Value Iteration utilities"<<endl;
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                 valiter<<setw(10)<<'#';
             }
             else
@@ -41,10 +41,10 @@ void output(agent &robot, maze &world) {
 
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                 valiter<<'#'<<"\t";
             }
-            else if (world.feature[i][j]=='T') {
+            else if (world.isTerminal(i,j)) {
                 valiter<<'T'<<"\t";
             }
             else
@@ -55,27 +55,26 @@ void output(agent &robot, maze &world) {
 
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                     
             }
             else
-                figureV<<setprecision(6)<<world.state[i][j]->i<<","<<world.state[i][j]->j<<";";
-            
+                figureV<<setprecision(6)<<i<<","<<j<<";";
         }
     }
     
     
     figureV<<endl;
 
-    for (int k=0; k<world.iternum; k++) {
+    for (int k = 0; k < 50; k++) {
 
         for (int i=0; i<6; i++) {
             for (int j=0; j<6; j++) {
-                if (world.feature[i][j]=='W') {
+                if (world.isWall(i,j)) {
                     
                 }
                 else
-                    figureV<<setprecision(6)<<world.state[i][j]->HistoryU[k]<<";";
+                    figureV<<setprecision(6)<<world.state[i][j]->hist_V[k]<<";";
                 
             }
         }
@@ -89,7 +88,7 @@ void output(agent &robot, maze &world) {
     
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                 qlearn<<setw(10)<<'#';
             }
             else
@@ -104,10 +103,10 @@ void output(agent &robot, maze &world) {
     
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                 qlearn<<'#'<<"\t";
             }
-            else if (world.feature[i][j]=='T') {
+            else if (world.isTerminal(i,j)) {
                 qlearn<<'T'<<"\t";
             }
             else
@@ -120,11 +119,11 @@ void output(agent &robot, maze &world) {
 
     for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-            if (world.feature[i][j]=='W') {
+            if (world.isWall(i,j)) {
                     
             }
             else
-                figureQ<<setprecision(6)<<world.state[i][j]->i<<","<<world.state[i][j]->j<<";";
+                figureQ<<setprecision(6)<<i<<","<<j<<";";
             
         }
     }
@@ -132,15 +131,15 @@ void output(agent &robot, maze &world) {
     
     figureQ<<endl;
 
-    for (int k=0; k<world.iternum; k++) {
+    for (int k=0; k < 50; k++) {
 
         for (int i=0; i<6; i++) {
             for (int j=0; j<6; j++) {
-                if (world.feature[i][j]=='W') {
+                if (world.isWall(i,j)) {
                     
                 }
                 else
-                    figureQ<<setprecision(6)<<world.state[i][j]->QHistoryU[k]<<";";
+                    figureQ<<setprecision(6)<<world.state[i][j]->hist_Q[k]<<";";
                 
             }
         }
@@ -162,12 +161,9 @@ void output(agent &robot, maze &world) {
 int main() {
 
     srand((unsigned)time(NULL));
-    agent robot(0.8, 0.1, 0.1);
-    maze world;
     
-    robot.curr = world.start;
-    robot.mapp = &world;
-    
+    maze  world;
+    agent robot(0.8, 0.1, 0.1, world);
     robot.valueIter(0.0001);
     
     robot.curr = world.start;

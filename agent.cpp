@@ -7,10 +7,14 @@
 
 using namespace std;
 
-agent::agent(float center, float left, float right) {
+agent::agent(float center, float left, float right, maze &map) {
+
     this->center = center;
     this->left = left;
     this->right = right;
+
+    this->curr = map.start;
+    this->mapp = &map;
 
     this->gamma = 0.99;
     Rp = 2;
@@ -38,7 +42,7 @@ void agent::valueIter(float err) {
         stop=1;
         for (int i=0; i<6;i++) {
             for (int j=0; j<6; j++) {
-                mapp->state[i][j]->HistoryU.push_back(mapp->state[i][j]->expUtil);
+                mapp->state[i][j]->hist_V.push_back(mapp->state[i][j]->expUtil);
                 mapp->state[i][j]->expUtilNext=mapp->state[i][j]->R+this->gamma*this->optimalU(mapp->state[i][j]);
 
         
@@ -89,7 +93,7 @@ void agent::TDQ(float err) {
     Diff=999;
     float RMSE_temp=0;
     
-    for(iternum=0; iternum < 7000; iternum++) {
+    for(iternum=0; iternum < 2000; iternum++) {
         
         curr = mapp->start;        //initialize the starting state
         
@@ -142,10 +146,10 @@ void agent::TDQ(float err) {
                 }
                 
                 temppointer->Qfinal=maxQ;
-                temppointer->QHistoryU.push_back(temppointer->Qfinal);
+                temppointer->hist_Q.push_back(temppointer->Qfinal);
                 temppointer->optimalpolicy_Q=action;
                 
-                if (mapp->feature[i][j]!='W'&& mapp->feature[i][j]!='T') {
+                if (!(mapp->isWall(i,j)) && !(mapp->isTerminal(i, j))) {
                     RMSE_temp+=(temppointer->expUtil-maxQ)*(temppointer->expUtil-maxQ)/25;
                 }
             }

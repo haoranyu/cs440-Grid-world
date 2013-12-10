@@ -10,17 +10,19 @@ class agent;
 class maze {
 public:
 	maze();
-
-    void setTerminal(int i, int j, int val);
-
-
-    char feature[6][6];
+	bool isWall(int i, int j);
+	bool isTerminal(int i, int j);
     
+
     states * state[6][6];
     states * start;
     states * terminal;
     
-    int iternum;
+
+
+private:
+	void setTerminal(int i, int j, int val);
+	char feature[6][6];
 };
 
 #endif

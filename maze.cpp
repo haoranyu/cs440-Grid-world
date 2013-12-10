@@ -13,7 +13,7 @@ maze::maze() {
         }
     }
     
-    terminal=new states(-1,-1);        //terminal state
+    terminal = new states(-1,-1);        //terminal state
     terminal->expUtil=0;
     terminal->R=0;
     
@@ -35,7 +35,6 @@ maze::maze() {
     for (int i=0; i<6;i++) {
         for (int j=0; j<6; j++) {
             
-            //initially assign the directren pointers to point self
             state[i][j]->direct[1] = state[i][j];
             state[i][j]->direct[2] = state[i][j];
             state[i][j]->direct[3] = state[i][j];
@@ -84,14 +83,7 @@ maze::maze() {
     setTerminal(4,5,-1);
     setTerminal(5,2,-1);
     setTerminal(5,3,-1);
-    setTerminal(5,5,10);
-    
-    for (int i=0; i<6; i++) {
-        for (int j=0;j<6;j++) {
-            cout<<feature[i][j]<<" ";
-        }
-        cout<<endl;
-    }
+    setTerminal(5,5,1);
 }
 void maze::setTerminal(int i, int j, int val){
     state[i][j]->R=val;
@@ -104,3 +96,9 @@ void maze::setTerminal(int i, int j, int val){
     }
 }
 
+bool maze::isWall(int i, int j){
+    return feature[i][j] == 'W';
+}
+bool maze::isTerminal(int i, int j){
+    return feature[i][j] == 'T';
+}

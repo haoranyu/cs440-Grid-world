@@ -8,6 +8,9 @@ using namespace std;
 
 class states {
 public:
+
+    states(int i, int j);
+
     states * direct[6];
 
     float expUtil;     //the expected utility of current state
@@ -16,7 +19,6 @@ public:
     float expUtilNext;    //the expect utility of next stage;
     
     int i, j;
-    states(int i, int j);
     
     float Q[4];             //the Q function 0: up  1: right, 2: down; 3: left
     
@@ -27,8 +29,8 @@ public:
     int optimalpolicy_Q;      //the optimal policy based on Q value
     int optimalpolicy_U;      //the optimal policy based on U value
     
-    vector<float> HistoryU;  //the U value convergence history
-    vector<float> QHistoryU;
+    vector<float> hist_V;
+    vector<float> hist_Q;
 };
 
 #endif

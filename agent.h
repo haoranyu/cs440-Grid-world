@@ -11,6 +11,7 @@ class maze;
 
 class agent {
 public:
+    agent(float center, float left, float right, maze &map);
     states * curr;
     states * next;
     states * going(int direction);
@@ -30,7 +31,7 @@ public:
     float Rp;       //the R+ in f(u,n)
     int Ne;             //Ne
     
-    agent(float center,float left,float right);
+    
     void valueIter(float err);
     float optimalU(states * state) ;
     maze *mapp;
