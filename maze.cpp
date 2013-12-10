@@ -9,11 +9,11 @@ maze::maze() {
     for (int i = 0; i < 6;i++) {
         for (int j = 0; j < 6; j++) {
             feature[i][j]='*';
-            s[i][j] = new states(i,j);    //create states
+            s[i][j] = new states(i,j);
         }
     }
     
-    terminal = new states(-1,-1);        //terminal state
+    terminal = new states(-1,-1);
     terminal->expUtil = 0;
     terminal->reward = 0;
 
