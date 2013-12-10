@@ -4,7 +4,7 @@ states::states(int i, int j) {
     this->expUtil = 0;
     this->expUtilNext = 0;
     this->visit = 0;
-    R=0;
+    reward=0;
     
     this->i = i;
     this->j = j;

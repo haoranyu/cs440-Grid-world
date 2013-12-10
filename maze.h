@@ -13,15 +13,13 @@ public:
 	bool isWall(int i, int j);
 	bool isTerminal(int i, int j);
     
-
-    states * state[6][6];
+    states * s[6][6];
     states * start;
     states * terminal;
-    
-
 
 private:
 	void setTerminal(int i, int j, int val);
+	void setWall(int i, int j);
 	char feature[6][6];
 };
 

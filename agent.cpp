@@ -1,9 +1,10 @@
-#include "agent.h"
 #include <cstdio>
 #include <ctime>
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
+
+#include "agent.h"
 
 using namespace std;
 
@@ -14,43 +15,35 @@ agent::agent(float center, float left, float right, maze &map) {
     this->right = right;
 
     this->curr = map.start;
-    this->mapp = &map;
+    this->world = &map;
 
     this->gamma = 0.99;
-    Rp = 2;
-    Ne = 10;
+    this->Rp = 2;
+    this->Ne = 10;
 }
 
+void agent::startReset(){
+    curr = world->start;
+}
 
-states * agent::going(int direction) {
+states * agent::takeAction(int direction) {
     int randnum = rand()%10;
-    states * nextstate;
     
-    if(randnum == 0)
+    if (randnum == 0)
         return curr->direct[direction+1];
-    else if(randnum == 1)
+    else if (randnum == 1)
         return curr->direct[direction-1];
     else
         return curr->direct[direction];
 }
 
-void agent::valueIter(float err) {
-    float DiffU;
-    int stop=0;
-    
-    for (iternum=0; iternum < 50; iternum++) {
-        stop=1;
+void agent::valueIterate(float err) {
+    for (int h=0; h < 50; h++) {
         for (int i=0; i<6;i++) {
             for (int j=0; j<6; j++) {
-                mapp->state[i][j]->hist_V.push_back(mapp->state[i][j]->expUtil);
-                mapp->state[i][j]->expUtilNext=mapp->state[i][j]->R+this->gamma*this->optimalU(mapp->state[i][j]);
-
-        
-                DiffU=abs(mapp->state[i][j]->expUtilNext-mapp->state[i][j]->expUtil);
-                if (DiffU > err) {        // if this update is not stable, then stop=0 means we need another iteration
-                    stop=0;
-                } 
-                mapp->state[i][j]->expUtil=mapp->state[i][j]->expUtilNext;
+                world->s[i][j]->hist_V.push_back(world->s[i][j]->expUtil);
+                world->s[i][j]->expUtilNext = world->s[i][j]->reward+this->gamma*this->optimalU(world->s[i][j]);
+                world->s[i][j]->expUtil = world->s[i][j]->expUtilNext;
             }
         }    
     }
@@ -79,35 +72,28 @@ float agent::optimalU(states * state) {
 }
 
 
-void agent::TDQ(float err) {
-    int a,a_next;
-    float alpha=1;
-    float temp=0;
-    float maxQ=-9999;
-    float Diff;
-    int action;
-    
-    states * temppointer=NULL;
+void agent::tdQlearning(float err) {
+    int     act,
+            act_next;
 
-    
-    Diff=999;
-    float RMSE_temp=0;
-    
-    for(iternum=0; iternum < 2000; iternum++) {
+    float   alpha = 1,
+            temp = 0,
+            maxQ = -9999;
+
+    for (int h = 0; h < 2000; h++) {
         
-        curr = mapp->start;        //initialize the starting state
+        curr = world->start;
         
-        a=selectaction(curr);           //choose a from the initial state
+        act=selectaction(curr);
+        while (curr->i!=-1) {
 
-        while(curr->i!=-1) {
-
-            next=going(a);   
+            next=takeAction(act);   
             curr->visit++;
-            curr->NAction[a-1]+=1;
+            curr->NAction[act-1]+=1;
 
-            alpha=60.0/(59+curr->NAction[a-1]);
+            alpha=60.0/(59+curr->NAction[act-1]);
 
-            a_next=selectaction(next); 
+            act_next=selectaction(next); 
 
             temp=0;
             maxQ=-999;
@@ -119,25 +105,25 @@ void agent::TDQ(float err) {
                 }
             }
 
-            curr->Q[a-1]=curr->Q[a-1]+alpha*(curr->R+gamma*maxQ-curr->Q[a-1]);
+            curr->Q[act-1]=curr->Q[act-1]+alpha*(curr->reward+gamma*maxQ-curr->Q[act-1]);
             
             curr=next;
-            a=a_next;
-            
+            act=act_next;
         }
 
     
-        RMSE_temp=0;
-        action=0;
-        
+        float       RMSE_temp = 0;
+        int         action = 0;
+        states *    temp_s = NULL;
+
         for (int i=0; i<6; i++) {
             for (int j=0; j<6; j++) {
                 temp=0;
                 maxQ=-9999;
                 
-                temppointer=mapp->state[i][j];
+                temp_s=world->s[i][j];
                 for (int k=0; k<4; k++) {
-                    temp=temppointer->Q[k];
+                    temp=temp_s->Q[k];
                     
                     if (temp > maxQ) {
                         maxQ = temp;
@@ -145,12 +131,12 @@ void agent::TDQ(float err) {
                     }
                 }
                 
-                temppointer->Qfinal=maxQ;
-                temppointer->hist_Q.push_back(temppointer->Qfinal);
-                temppointer->optimalpolicy_Q=action;
+                temp_s->Qfinal=maxQ;
+                temp_s->hist_Q.push_back(temp_s->Qfinal);
+                temp_s->optimalpolicy_Q=action;
                 
-                if (!(mapp->isWall(i,j)) && !(mapp->isTerminal(i, j))) {
-                    RMSE_temp+=(temppointer->expUtil-maxQ)*(temppointer->expUtil-maxQ)/25;
+                if (!(world->isWall(i,j)) && !(world->isTerminal(i, j))) {
+                    RMSE_temp+=(temp_s->expUtil-maxQ)*(temp_s->expUtil-maxQ)/25;
                 }
             }
         }

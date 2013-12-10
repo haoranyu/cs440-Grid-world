@@ -9,72 +9,66 @@ maze::maze() {
     for (int i=0; i<6;i++) {
         for (int j=0; j<6; j++) {
             feature[i][j]='*';
-            state[i][j] = new states(i,j);    //create states
+            s[i][j] = new states(i,j);    //create states
         }
     }
     
     terminal = new states(-1,-1);        //terminal state
-    terminal->expUtil=0;
-    terminal->R=0;
+    terminal->expUtil = 0;
+    terminal->reward = 0;
+
+    setWall(0, 3);
+    setWall(1, 1);
+    setWall(1, 3);
+    setWall(2, 1);
+    setWall(3, 1);
     
-    feature[0][3]='W';
-    feature[1][1]='W';
-    feature[1][3]='W';
-    feature[2][1]='W';
-    feature[3][1]='W';
-    feature[0][5]='T';
-    feature[4][3]='T';
-    feature[4][5]='T';
-    feature[5][2]='T';
-    feature[5][3]='T';
-    feature[5][5]='T';
-    
-    start = state[5][0];
+    start = s[5][0];
     
     
     for (int i=0; i<6;i++) {
         for (int j=0; j<6; j++) {
             
-            state[i][j]->direct[1] = state[i][j];
-            state[i][j]->direct[2] = state[i][j];
-            state[i][j]->direct[3] = state[i][j];
-            state[i][j]->direct[4] = state[i][j];
+            s[i][j]->direct[1] = s[i][j];
+            s[i][j]->direct[2] = s[i][j];
+            s[i][j]->direct[3] = s[i][j];
+            s[i][j]->direct[4] = s[i][j];
             
             
             if (i>0) {
                 if (feature[i-1][j]=='W') 
-                    state[i][j]->direct[1]=state[i][j];
+                    s[i][j]->direct[1]=s[i][j];
                 else
-                    state[i][j]->direct[1]=state[i-1][j];
+                    s[i][j]->direct[1]=s[i-1][j];
             }
 
             if (i<5) {
                 if (feature[i+1][j]=='W')
-                    state[i][j]->direct[3]=state[i][j];
+                    s[i][j]->direct[3]=s[i][j];
                 else
-                    state[i][j]->direct[3]=state[i+1][j];
+                    s[i][j]->direct[3]=s[i+1][j];
             }
             
             if (j<5) {
                 
                 if (feature[i][j+1]=='W')
-                    state[i][j]->direct[2]=state[i][j];
+                    s[i][j]->direct[2]=s[i][j];
                 else
-                    state[i][j]->direct[2]=state[i][j+1];
+                    s[i][j]->direct[2]=s[i][j+1];
             }
             
             if (j>0) {
                 if (feature[i][j-1]=='W')
-                    state[i][j]->direct[4]=state[i][j];
+                    s[i][j]->direct[4]=s[i][j];
                 else
-                    state[i][j]->direct[4]=state[i][j-1];
+                    s[i][j]->direct[4]=s[i][j-1];
             }
 
             
-            state[i][j]->direct[0] = state[i][j]->direct[4];
-            state[i][j]->direct[5] = state[i][j]->direct[1];
+            s[i][j]->direct[0] = s[i][j]->direct[4];
+            s[i][j]->direct[5] = s[i][j]->direct[1];
             
-            state[i][j]->R=-0.04;
+            s[i][j]->reward=-0.04;
         }
     }
     
@@ -86,16 +80,19 @@ maze::maze() {
     setTerminal(5,5,1);
 }
 void maze::setTerminal(int i, int j, int val){
-    state[i][j]->R=val;
-    state[i][j]->expUtil=val;
+    feature[i][j] = 'T';
+    s[i][j]->reward=val;
+    s[i][j]->expUtil=val;
     for (int k=0; k<4; k++) {
-        state[i][j]->Q[k]=val;
+        s[i][j]->Q[k]=val;
     }
     for (int k=0; k<6; k++) {
-      state[i][j]->direct[k]=terminal;
+      s[i][j]->direct[k]=terminal;
     }
 }
-
+void maze::setWall(int i, int j){
+    feature[i][j] = 'W';
+}
 bool maze::isWall(int i, int j){
     return feature[i][j] == 'W';
 }

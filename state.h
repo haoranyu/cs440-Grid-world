@@ -14,7 +14,7 @@ public:
     states * direct[6];
 
     float expUtil;     //the expected utility of current state
-    float R;
+    float reward;
     
     float expUtilNext;    //the expect utility of next stage;
     
